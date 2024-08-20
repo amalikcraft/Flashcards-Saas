@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Paper, Container, TextField, Button, Typography, Box, Grid, Card, CardContent, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, CardActionArea } from '@mui/material'
 import { useUser } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
-import { writeBatch, doc, collection, getDoc } from 'firebase/firestore'
+import { writeBatch, doc, collection, getDoc, setDoc } from 'firebase/firestore'
 import { db } from '@/firebase'
 
 export default function Generate() {
