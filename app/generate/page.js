@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Paper, Container, TextField, Button, Typography, Box, Grid, Card, CardContent, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, CardActionArea } from '@mui/material'
 import { useUser } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
@@ -15,6 +15,12 @@ export default function Generate() {
   const [name, setName] = useState('')
   const [open, setOpen] = useState(false)
   const router = useRouter()
+
+  useEffect(() => {
+    if (isLoaded && !isSignedIn) {
+      router.push('/sign-in')
+    }
+  }, [isLoaded, isSignedIn, router])
 
   const handleSubmit = async () => {
     fetch('api/generate', {
@@ -126,7 +132,7 @@ export default function Generate() {
                             width: '100%',
                             height: '200px',
                             boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
-                            transform:flipped [index]
+                            transform: flipped[index]
                               ? 'rotateY(180deg)'
                               : 'rotateY(0deg)',
                           },
@@ -144,17 +150,12 @@ export default function Generate() {
                           '& > div > div:nth-of-type(2)': {
                             transform: 'rotateY(180deg)',
                           },
-                          }}
-                        >
+                        }}
+                      >
                         <div>
                           <div>
                             <Typography variant="h5" component="div">
-                              {flashcard.front}
-                            </Typography>
-                          </div>
-                          <div>
-                            <Typography variant="h5" component="div">
-                              {flashcard.back}
+                              {flipped[index] ? flashcard.back : flashcard.front}
                             </Typography>
                           </div>
                         </div>
