@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { writeBatch, doc, collection, getDoc, setDoc } from 'firebase/firestore'
 import { db } from '@/firebase'
 
+
 export default function Generate() {
   const { isLoaded, isSignedIn, user } = useUser()
   const [flashcards, setFlashcards] = useState([])
@@ -121,6 +122,7 @@ export default function Generate() {
                       handleCardClick(index)
                     }}
                   >
+                   
                     <CardContent>
                       <Box
                         sx={{
@@ -132,35 +134,44 @@ export default function Generate() {
                             width: '100%',
                             height: '200px',
                             boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
-                            transform: flipped[index]
-                              ? 'rotateY(180deg)'
-                              : 'rotateY(0deg)',
+                            transform: flipped[index] ? 'rotateY(180deg)' : 'rotateY(0deg)',
                           },
                           '& > div > div': {
                             position: 'absolute',
                             width: '100%',
                             height: '100%',
-                            backfaceVisibility: 'hidden',
                             display: 'flex',
                             justifyContent: 'center',
                             alignItems: 'center',
                             padding: 2,
                             boxSizing: 'border-box',
+                            backfaceVisibility: 'hidden',
+                          },
+                          '& > div > div:first-of-type': {
+                            transform: 'rotateY(0deg)',
+                            zIndex: flipped[index] ? 1 : 2,  // Front content on top when not flipped
                           },
                           '& > div > div:nth-of-type(2)': {
                             transform: 'rotateY(180deg)',
+                            zIndex: flipped[index] ? 2 : 1,  // Back content on top when flipped
                           },
                         }}
                       >
                         <div>
                           <div>
                             <Typography variant="h5" component="div">
-                              {flipped[index] ? flashcard.back : flashcard.front}
+                              {flashcard.front}
+                            </Typography>
+                          </div>
+                          <div>
+                            <Typography variant="h5" component="div">
+                              {flashcard.back}
                             </Typography>
                           </div>
                         </div>
                       </Box>
                     </CardContent>
+
                   </CardActionArea>
                 </Card>
               </Grid>
