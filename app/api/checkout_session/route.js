@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
 
-
-
 const formatAmountForStripe = (amount, currency) => {
     return Math.round(amount * 100)
 }
@@ -11,23 +9,28 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
     apiVersion: '2022-11-15',
 })
 
-
 export async function GET(req){
   const searchParams = req.nextUrl.searchParams
   const session_id = searchParams.get('session_id')
 
   try{
     const checkoutSession = await stripe.checkout.sessions.retrieve(session_id)
-  return NextResponse.json(checkoutSession)
+    return NextResponse.json(checkoutSession)
   }catch(error){
-  console.error('Error retrieving checkout session', error)
-  return NextResponse.json({error: {message: error.message}}, {status: 500})
+    console.error('Error retrieving checkout session', error)
+    return NextResponse.json({error: {message: error.message}}, {status: 500})
   }
-
 }
 
 export async function POST(req) {
     try {
+        const { plan } = await req.json(); // Get plan type from request body
+
+        const unitAmount = {
+            free: 0,
+            standard: 5, // $5.00
+            premium: 10, // $10.00
+        }[plan] || 0;
 
         const params = {
             mode: 'subscription',
@@ -37,9 +40,9 @@ export async function POST(req) {
                 price_data: {
                   currency: 'usd',
                   product_data: {
-                    name: 'Pro subscription',
+                    name: `${plan.charAt(0).toUpperCase() + plan.slice(1)} subscription`,
                   },
-                  unit_amount: formatAmountForStripe(10, 'usd'), // $10.00
+                  unit_amount: formatAmountForStripe(unitAmount, 'usd'),
                   recurring: {
                     interval: 'month',
                     interval_count: 1,
@@ -48,23 +51,16 @@ export async function POST(req) {
                 quantity: 1,
               },
             ],
-            success_url: `${req.headers.get(
-              'origin',
-            )}/result?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${req.headers.get(
-              'origin',
-            )}/result?session_id={CHECKOUT_SESSION_ID}`,
+            success_url: `${req.headers.get('origin')}/result?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${req.headers.get('origin')}/result?session_id={CHECKOUT_SESSION_ID}`,
         }
           
-          const checkoutSession = await stripe.checkout.sessions.create(params)
-          
-          return NextResponse.json(checkoutSession, {
+        const checkoutSession = await stripe.checkout.sessions.create(params)
+        return NextResponse.json(checkoutSession, {
             status: 200,
-          })
+        })
 
-    } 
-    
-    catch (error) {
+    } catch (error) {
       console.error('Error creating checkout session:', error)
       return new NextResponse(JSON.stringify({ error: { message: error.message } }), {
         status: 500,

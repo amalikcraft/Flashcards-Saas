@@ -1,11 +1,12 @@
 'use client';
 
-import Image from 'next/image';
-import getStripe from '@/utils/get-stripe.js';
-import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
-import { Container, AppBar, Toolbar, Typography, Button, Box, Grid, Card, CardContent } from '@mui/material';
+import { Container, Box, Typography, Grid, Card, CardContent, Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Head from 'next/head';
+import { AppBar, Toolbar } from '@mui/material';
+import Link from 'next/link';
+import { SignedOut, SignedIn, UserButton } from '@clerk/nextjs';
+import getStripe from '@/utils/get-stripe.js';
 import { FaFacebookF, FaTwitter, FaInstagram } from 'react-icons/fa';
 
 // Custom styled button with animations
@@ -14,6 +15,21 @@ const AnimatedButton = styled(Button)({
   '&:hover': {
     transform: 'scale(1.05)',
     boxShadow: '0px 4px 15px rgba(0, 0, 0, 0.2)',
+  },
+});
+
+// Button styled to look like the Typography component
+const QuizzMeButton = styled(Button)({
+  fontSize: '1.5rem',
+  fontWeight: 'bold',
+  color: 'white',
+  textTransform: 'none',
+  background: 'none',
+  padding: 0,
+  minWidth: 'auto',
+  '&:hover': {
+    textDecoration: 'none',
+    background: 'none',
   },
 });
 
@@ -26,25 +42,7 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
   color: theme.palette.primary.main,
 }));
 
-// Card Styles
-const StyledCard = styled(Card)(({ theme }) => ({
-  height: '100%',
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center',
-  textAlign: 'center',
-  padding: theme.spacing(3),
-  borderRadius: '16px',
-  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-  border: '1px solid',
-  borderColor: 'grey.300',
-  '&:hover': {
-    transform: 'scale(1.05)',
-    boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.1)',
-  },
-}));
-
-export default function Home() {
+export default function Pricing() {
   const handleSubscription = async (plan) => {
     const response = await fetch('/api/checkout_session', {
       method: 'POST',
@@ -71,31 +69,15 @@ export default function Home() {
   };
 
   return (
-    <Container
-      maxWidth="100vw"
-      disableGutters
-      sx={{
-        backgroundColor: '#f0f4f8', // Set the background color for the entire page
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        overflowX: 'hidden', // Prevent horizontal scrolling
-      }}
-    >
-      <Head>
-        <title>QuizzMe - Flashcards Made Simple</title>
-        <meta name="description" content="Create flashcards from your text with ease." />
-      </Head>
-
-      {/* Sticky AppBar */}
-      <AppBar position="sticky" sx={{ backgroundColor: '#1976d2', width: '100%' }}>
+    <>
+      {/* Nav Bar */}
+      <AppBar position="fixed" sx={{ backgroundColor: '#1976d2', width: '100%', top: 0, left: 0 }}>
         <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', ml: 2 }}>
-            <Typography variant="h6" sx={{ flexGrow: 1, mr: 4, fontSize: '1.5rem', fontWeight: 'bold' }}>
+            <QuizzMeButton href="/" onClick={() => window.location.href = '/'}>
               QuizzMe
-            </Typography>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            </QuizzMeButton>
+            <Box sx={{ display: 'flex', alignItems: 'center', ml: 4 }}>
               <Button color="inherit" sx={{ mr: 2 }} href="/Dashboard">
                 Dashboard
               </Button>
@@ -120,128 +102,7 @@ export default function Home() {
         </Toolbar>
       </AppBar>
 
-      {/* Hero Section */}
-      <Box
-        sx={{
-          width: '100%',
-          background: 'linear-gradient(to right, #1976d2, #2196f3)', // Gradient background
-          color: '#fff',
-          textAlign: 'center',
-          py: 18, // Increase padding top and bottom
-          position: 'relative',
-          overflow: 'hidden',
-          '&::before': {
-            content: '""',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            background: 'rgba(0, 0, 0, 0.2)', // Overlay for better text readability
-            zIndex: 1,
-          },
-        }}
-      >
-        <Box sx={{ position: 'relative', zIndex: 2 }}>
-          <Typography
-            variant="h2"
-            component="h1"
-            sx={{
-              fontSize: { xs: '2rem', md: '3rem' }, // Responsive font size
-              fontWeight: 'bold',
-              mb: 2,
-            }}
-          >
-            Welcome to QuizzMe
-          </Typography>
-          <Typography
-            variant="h5"
-            component="h2"
-            sx={{
-              fontSize: { xs: '1.2rem', md: '1.5rem' }, // Responsive font size
-              mb: 4,
-            }}
-          >
-            The easiest way to create flashcards from your text.
-          </Typography>
-          <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center' }}>
-            <AnimatedButton
-              variant="contained"
-              color="secondary"
-              sx={{ py: 1.5, px: 3, fontSize: '1.1rem' }} // Adjust padding and font size
-              href="/Get-Started"
-            >
-              Get Started
-            </AnimatedButton>
-          </Box>
-        </Box>
-      </Box>
-
-      {/* Features Section */}
-      <Box
-        sx={{
-          width: '100%',
-          backgroundImage: 'url("/study.jpg")',
-          backgroundSize: 'cover',
-          backgroundPosition: 'left center',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center', // Center items
-          backgroundColor: '#f0f4f8', // Fallback color in case image doesn't load
-          minHeight: '100vh', // Ensure full height if needed
-          p: 0, // Remove padding for the image
-          m: 0, // Remove margin for the image
-        }}
-      >
-        <Box
-          sx={{
-            p: 4, // Padding for the inner content
-            m: 2, // Margin for the inner content
-            width: '100%', // Adjust width as needed
-          }}
-        >
-          <Grid container spacing={3} sx={{ maxWidth: '1200px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-            <Grid item xs={12} md={4} sx={{ ml: { md: '5%' } }}> {/* Move boxes to the right */}
-              <StyledCard elevation={6}>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', fontSize: '1.25rem' }}> {/* Increase text size */}
-                    Easy-to-Use
-                  </Typography>
-                  <Typography sx={{ fontSize: '1rem' }}> {/* Increase text size */}
-                    Our user-friendly interface makes the process of creating flashcards seamless and efficient.
-                  </Typography>
-                </CardContent>
-              </StyledCard>
-            </Grid>
-            <Grid item xs={12} md={4} sx={{ ml: { md: '10%' } }}> {/* Move boxes to the right */}
-              <StyledCard elevation={6}>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', fontSize: '1.25rem' }}> {/* Increase text size */}
-                    AI Powered
-                  </Typography>
-                  <Typography sx={{ fontSize: '1rem' }}> {/* Increase text size */}
-                    Create flashcards instantly with our integrated OpenAI technology.
-                  </Typography>
-                </CardContent>
-              </StyledCard>
-            </Grid>
-            <Grid item xs={12} md={4} sx={{ ml: { md: '15%' } }}> {/* Move boxes to the right */}
-              <StyledCard elevation={6}>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', fontSize: '1.25rem' }}> {/* Increase text size */}
-                    Study Anywhere
-                  </Typography>
-                  <Typography sx={{ fontSize: '1rem' }}> {/* Increase text size */}
-                    Study on the go with flashcards available on all your devices.
-                  </Typography>
-                </CardContent>
-              </StyledCard>
-            </Grid>
-          </Grid>
-        </Box>
-      </Box>
-
-      {/* Pricing Section */}
+      {/* Page Content */}
       <Container
         maxWidth="xl"
         sx={{
@@ -250,8 +111,8 @@ export default function Home() {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          pt: 0, // Increased padding top to create more space below 
-          py: 15,
+          pt: 2, // Increased padding top to create more space below the fixed navbar
+          py: 20,
           px: 2,
         }}
       >
@@ -260,7 +121,7 @@ export default function Home() {
           <meta name="description" content="Check out our pricing plans and choose the best one for you." />
         </Head>
 
-        <Typography variant="h2" component="h1" sx={{ mb: 3 }}>
+        <Typography variant="h2" component="h1" sx={{ mb: 8 }}>
           Choose Your Study Plan
         </Typography>
 
@@ -404,10 +265,12 @@ export default function Home() {
             <FaInstagram size={24} />
           </a>
         </div>
-        <p style={{ fontSize: '0.875rem', margin: 0 }}>
-          &copy; 2024 QuizzMe. All rights reserved.
-        </p>
+
+        <Typography variant="body2" color="inherit">
+          &copy; {new Date().getFullYear()} QuizzMe. All rights reserved.
+        </Typography>
+
       </footer>
-    </Container>
+    </>
   );
 }
