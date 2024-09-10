@@ -164,7 +164,7 @@ export default function Home() {
           >
             The easiest way to create flashcards from your text.
           </Typography>
-          <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center' }}>
+          <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center', gap: 2 }}>
             <AnimatedButton
               variant="contained"
               color="secondary"
@@ -172,6 +172,14 @@ export default function Home() {
               href="/Get-Started"
             >
               Get Started
+            </AnimatedButton>
+            <AnimatedButton
+              variant="contained"
+              color="primary"
+              sx={{ py: 1.5, px: 3, fontSize: '1.1rem' }} // Adjust padding and font size
+              href="/Demo"
+            >
+              Try Demo
             </AnimatedButton>
           </Box>
         </Box>
